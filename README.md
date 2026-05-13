@@ -62,13 +62,6 @@ mkdir build && cd build
 make -j$(nproc)
 ```
 
-Or with CMake presets:
-
-```bash
-cmake --preset wii
-cmake --build build -j$(nproc)
-```
-
 This produces `CopyMii.dol`. Copy it to `SD:/apps/CopyMii/boot.dol` on your SD card.
 
 ---
