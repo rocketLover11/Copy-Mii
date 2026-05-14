@@ -32,17 +32,18 @@ add_executable(${PROJECT_NAME}
     src/Main.cpp
     src/gx/Renderer.cpp
     src/gx/Texture.cpp
+    src/ui/Font.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/include
-    ${DEVKITPRO}/portlibs/wii/include
-    ${DEVKITPRO}/portlibs/wii/include/freetype2
+    ${DEVKITPRO}/portlibs/ppc/include
+    ${DEVKITPRO}/portlibs/ppc/include/freetype2
     ${DEVKITPRO}/libogc/include
 )
 
 target_link_directories(${PROJECT_NAME} PRIVATE
-    ${DEVKITPRO}/portlibs/wii/lib
+    ${DEVKITPRO}/portlibs/ppc/lib
     ${DEVKITPRO}/libogc/lib/wii
 )
 
@@ -59,6 +60,9 @@ add_dependencies(${PROJECT_NAME} EmbedFont)
 target_link_libraries(${PROJECT_NAME}
     ${CMAKE_BINARY_DIR}/Helvetica.o
     freetype
+    brotlidec
+    brotlicommon
+    bz2
     png
     zip
     z
@@ -67,3 +71,12 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 ogc_create_dol(${PROJECT_NAME})
+
+set(STAGING_DIR "${CMAKE_CURRENT_BINARY_DIR}/tmp")
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${STAGING_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:CopyMii>" "${STAGING_DIR}/"
+    COMMAND ${CMAKE_COMMAND} -E tar "cfv" "${CMAKE_CURRENT_BINARY_DIR}/CopyMii.zip" --format=zip "${STAGING_DIR}"
+    COMMENT "Packaging..."
+)

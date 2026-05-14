@@ -44,20 +44,17 @@ void Texture::upload(const u8* data, u16 width, u16 height) {
             u32 tileX = x / 4;
             u32 tileY = y / 4;
             u32 tilesW = tw / 4;
-            u32 tileIdx = tileY * tilesW + tileX;
+            u32 tileIdx = (tileY * tilesW + tileX);
             u32 pixelInTile = (y % 4) * 4 + (x % 4);
-
-            u8* tile = dst + tileIdx * 32;
-            tile[pixelInTile * 2]     = a;  // AR block
+            u8* tile = dst + (tileIdx * 64); 
+            tile[pixelInTile * 2] = a; 
             tile[pixelInTile * 2 + 1] = r;
-            tile[16 + pixelInTile * 2]     = g;  // GB block
-            tile[16 + pixelInTile * 2 + 1] = b;
+            tile[32 + pixelInTile * 2] = g; 
+            tile[32 + pixelInTile * 2 + 1] = b;
         }
     }
 
     DCFlushRange(mData, tw * th * 4);
-    GX_InitTexObj(&mTexObj, mData, tw, th,
-                  GX_TF_RGBA8, GX_CLAMP, GX_CLAMP, GX_FALSE);
 }
 
 void Texture::bind(u8 slot) const {
@@ -68,3 +65,7 @@ void Texture::bind(u8 slot) const {
 u16 Texture::getWidth() const { return mWidth; }
 u16 Texture::getHeight() const { return mHeight; }
 bool Texture::isValid() const { return mData != nullptr; }
+
+u16 Texture::padSize(u16 size, u16 tile) {
+    return (size + tile - 1) / tile * tile;
+}

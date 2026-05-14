@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<app version="0.0.1">
+    <name>CopyMii</name>
+    <coder>rocketLover11</coder>
+    <version>0.0.1</version>
+    <release_date>20260513000000</release_date>
+    <short_description>Copy homebrew to your wii</short_description>
+    <long_description>A Wii homebrew app that lets you browse and install Homebrew Channel apps directly on your Wii over the network. A host computer serves archived HBC apps .zip via a local server, and the Wii downloads and extracts them straight to your SD card.</long_description>
+</app>
