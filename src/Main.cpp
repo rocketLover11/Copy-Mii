@@ -29,10 +29,10 @@ int main() {
     Cursor cursor;
     Keyboard keyboard(helvetica, cursor);
 
-    f32 titleX = (renderer.getWidth() - helvetica.measureText("CopyMii")) / 2.0f;
-    Label title(helvetica, titleX, 25, "CopyMii", 255, 255, 255, 255);
-    Button confirmButton(helvetica, 100, 200, 200, 100, "Button");
-    InputBox ipBox(helvetica, cursor, keyboard, 100, 320, 240, 50, "Enter server IP");
+    Label title(helvetica, renderer.centerX(helvetica.measureText("CopyMii")), 25, "CopyMii", 255, 255, 255, 255);
+    Label exitLabel(helvetica, renderer.centerX(helvetica.measureText("Press HOME to Exit")), renderer.getHeight() - 25, "Press HOME to Exit", 255, 255, 255, 255);
+    InputBox ipBox(helvetica, cursor, keyboard, renderer.centerX(240), renderer.centerY(50), 240, 50, "Enter server IP");
+    Button confirmButton(helvetica, renderer.centerX(240), renderer.centerY(50) + 55, 240, 50, "Confirm");
 
     while (true) {
         WPAD_ScanPads();
@@ -50,8 +50,9 @@ int main() {
         renderer.beginFrame();
 
         title.draw();
-        confirmButton.draw();
+        exitLabel.draw();
         ipBox.draw();
+        confirmButton.draw();
         
         keyboard.draw();
         cursor.draw();

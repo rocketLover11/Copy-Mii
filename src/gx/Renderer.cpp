@@ -126,3 +126,6 @@ u32 Renderer::getHeight() const {
 bool Renderer::isWidescreen() const {
     return mIsWidescreen;
 }
+
+f32 Renderer::centerX(f32 width) const { return (getWidth() - width) / 2.0f; }
+f32 Renderer::centerY(f32 height) const { return (getHeight() - height) / 2.0f; }

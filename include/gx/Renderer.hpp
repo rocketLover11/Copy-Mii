@@ -22,6 +22,9 @@ public:
     u32 getHeight() const;
     bool isWidescreen() const;
 
+    f32 centerX(f32 width) const;
+    f32 centerY(f32 height) const;
+
 private:
     Renderer() = default;
 
