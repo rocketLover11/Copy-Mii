@@ -145,3 +145,14 @@ void Font::drawText(f32 x, f32 y, const char* text, u8 r, u8 g, u8 b, u8 a) {
     GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
     GX_SetBlendMode(GX_BM_NONE, GX_BL_ONE, GX_BL_ZERO, GX_LO_CLEAR);
 }
+
+f32 Font::measureText(const char* text) const {
+    if (!mReady) return 0;
+    f32 width = 0;
+    for (const char* p = text; *p; p++) {
+        u8 c = (u8)*p;
+        if (c < 32 || c >= MAX_GLYPHS) continue;
+        width += mGlyphs[c].advance;
+    }
+    return width;
+}

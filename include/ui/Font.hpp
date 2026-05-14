@@ -26,7 +26,7 @@ public:
     bool load(const u8* data, u32 size, u32 pixelSize = 24);
     void drawText(f32 x, f32 y, const char* text, u8 r = 255, u8 g = 255, u8 b = 255, u8 a = 255);
 
-    u32 getLineHeight() const;
+    f32 measureText(const char* text) const;
 
 private:
     bool bakeAtlas();

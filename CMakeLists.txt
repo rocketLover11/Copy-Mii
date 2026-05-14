@@ -33,6 +33,9 @@ add_executable(${PROJECT_NAME}
     src/gx/Renderer.cpp
     src/gx/Texture.cpp
     src/ui/Font.cpp
+    src/ui/Cursor.cpp
+    src/ui/Label.cpp
+    src/ui/Button.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

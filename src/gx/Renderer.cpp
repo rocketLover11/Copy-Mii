@@ -1,4 +1,7 @@
 #include "gx/Renderer.hpp"
+#include <ogc/conf.h>
+#include <malloc.h>
+#include <cstring>
 
 Renderer& Renderer::instance() {
     static Renderer renderer;
@@ -6,6 +9,9 @@ Renderer& Renderer::instance() {
 }
 
 void Renderer::init() {
+    // 1. Initialize system config to check user settings
+    CONF_Init();
+    
     initVideo();
     initGX();
 }
@@ -34,6 +40,13 @@ void Renderer::initGX() {
     GXColor background = { 175, 194, 224, 255 };
     GX_SetCopyClear(background, GX_MAX_Z24);
 
+    // 2. Determine Aspect Ratio
+    // 16:9 on Wii is an anamorphic squash; we use 854 logical pixels to 
+    // compensate for the horizontal stretch of widescreen TVs.
+    mIsWidescreen = (CONF_GetAspectRatio() == CONF_ASPECT_16_9);
+    mLogicalWidth = mIsWidescreen ? 854 : 640;
+
+    // Viewport and Scissor still use the physical hardware dimensions
     GX_SetViewport(0, 0, mMode->fbWidth, mMode->efbHeight, 0, 1);
 
     f32 yscale = GX_GetYScaleFactor(mMode->efbHeight, mMode->xfbHeight);
@@ -59,8 +72,9 @@ void Renderer::initGX() {
     GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
     GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 
+    // 3. Set up the Projection Matrix using the Logical Width
     Mtx44 proj;
-    guOrtho(proj, 0, mMode->efbHeight, 0, mMode->fbWidth, 0, 300);
+    guOrtho(proj, 0, mMode->efbHeight, 0, mLogicalWidth, 0, 300);
     GX_LoadProjectionMtx(proj, GX_ORTHOGRAPHIC);
 
     Mtx view;
@@ -85,17 +99,30 @@ void Renderer::endFrame() {
 
 void Renderer::drawRect(f32 x, f32 y, f32 w, f32 h, u8 r, u8 g, u8 b, u8 a) {
     GX_Begin(GX_QUADS, GX_VTXFMT0, 4);
-    GX_Position2f32(x, y);
-    GX_Color4u8(r, g, b, a);
-    GX_Position2f32(x + w, y);
-    GX_Color4u8(r, g, b, a);
-    GX_Position2f32(x + w, y + h);
-    GX_Color4u8(r, g, b, a);
-    GX_Position2f32(x, y + h);
-    GX_Color4u8(r, g, b, a);
+        GX_Position2f32(x, y);
+        GX_Color4u8(r, g, b, a);
+        GX_Position2f32(x + w, y);
+        GX_Color4u8(r, g, b, a);
+        GX_Position2f32(x + w, y + h);
+        GX_Color4u8(r, g, b, a);
+        GX_Position2f32(x, y + h);
+        GX_Color4u8(r, g, b, a);
     GX_End();
 }
 
-GXRModeObj* Renderer::getMode() const { return mMode; }
-u32 Renderer::getWidth() const { return mMode->fbWidth; }
-u32 Renderer::getHeight() const { return mMode->efbHeight; }
+GXRModeObj* Renderer::getMode() const { 
+    return mMode; 
+}
+
+// These getters ensure the rest of your app stays in the logical coordinate space
+u32 Renderer::getWidth() const { 
+    return mLogicalWidth; 
+}
+
+u32 Renderer::getHeight() const { 
+    return mMode->efbHeight; 
+}
+
+bool Renderer::isWidescreen() const {
+    return mIsWidescreen;
+}
