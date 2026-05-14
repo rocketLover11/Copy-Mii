@@ -64,3 +64,5 @@ f32 Button::getX() const { return mX; }
 f32 Button::getY() const { return mY; }
 f32 Button::getW() const { return mW; }
 f32 Button::getH() const { return mH; }
+
+char* Button::getText() { return (char*)mText; }

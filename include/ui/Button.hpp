@@ -28,6 +28,8 @@ public:
     f32 getW() const;
     f32 getH() const;
 
+    char* getText();
+
 private:
     Font& mFont;
 

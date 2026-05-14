@@ -36,6 +36,8 @@ add_executable(${PROJECT_NAME}
     src/ui/Cursor.cpp
     src/ui/Label.cpp
     src/ui/Button.cpp
+    src/ui/Keyboard.cpp
+    src/ui/InputBox.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

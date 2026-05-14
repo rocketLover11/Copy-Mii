@@ -7,6 +7,8 @@
 #include "ui/Button.hpp"
 #include "ui/Label.hpp"
 #include "ui/Font.hpp"
+#include "ui/Keyboard.hpp"
+#include "ui/InputBox.hpp"
 
 extern "C" {
     extern const u8 _binary_Helvetica_ttf_start[];
@@ -18,18 +20,19 @@ int main() {
     renderer.init();
 
     WPAD_Init();
-    WPAD_SetDataFormat(WPAD_CHAN_0, WPAD_FMT_BTNS_ACC_IR);
-
     WPAD_SetVRes(WPAD_CHAN_0, renderer.getWidth(), renderer.getHeight());
+    WPAD_SetDataFormat(WPAD_CHAN_0, WPAD_FMT_BTNS_ACC_IR);
 
     Font helvetica;
     helvetica.load(_binary_Helvetica_ttf_start, (u32)&_binary_Helvetica_ttf_size);
 
-    Label title(helvetica, 100, 100, "Test", 255, 255, 255, 255);
-    Label buttonTestLabel(helvetica, 500, 100, "", 255, 255, 255, 255);
-    Button button(helvetica, 100, 200, 200, 100, "Button");
-
     Cursor cursor;
+    Keyboard keyboard(helvetica, cursor);
+
+    f32 titleX = (renderer.getWidth() - helvetica.measureText("CopyMii")) / 2.0f;
+    Label title(helvetica, titleX, 25, "CopyMii", 255, 255, 255, 255);
+    Button confirmButton(helvetica, 100, 200, 200, 100, "Button");
+    InputBox ipBox(helvetica, cursor, keyboard, 100, 320, 240, 50, "Enter server IP");
 
     while (true) {
         WPAD_ScanPads();
@@ -37,20 +40,20 @@ int main() {
         if (pressed & WPAD_BUTTON_HOME) break;
 
         cursor.update();
-        button.update(cursor);
+        keyboard.update();
+        ipBox.update();
 
-        if (button.isPressed()) buttonTestLabel.setText("Button works");
+        if (!keyboard.isOpen()) {
+            confirmButton.update(cursor);
+        }
 
         renderer.beginFrame();
-        
-        float centerX = renderer.getWidth() / 2.0f;
-        float centerY = renderer.getHeight() / 2.0f;
-        renderer.drawRect(centerX - 80, centerY - 60, 160, 120, 100, 180, 255);
 
         title.draw();
-        button.draw();
-        buttonTestLabel.draw();
-
+        confirmButton.draw();
+        ipBox.draw();
+        
+        keyboard.draw();
         cursor.draw();
         
         renderer.endFrame();
